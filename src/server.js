@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
-import express from 'express'
 import exitHook from 'async-exit-hook'
-import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb'
+import express from 'express'
 import { env } from '~/config/environment'
+import { CLOSE_DB, CONNECT_DB } from '~/config/mongodb'
+import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { APIs_V1 } from '~/routes/v1'
 
 const START_SERVER = () => {
@@ -13,6 +14,9 @@ const START_SERVER = () => {
 
   // Use APIs V1
   app.use('/v1', APIs_V1)
+
+  // Middleware xử lý lỗi tập trung
+  app.use(errorHandlingMiddleware)
 
   app.get('/', (req, res) => {
     res.send('Hello world!')
