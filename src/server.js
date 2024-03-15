@@ -8,7 +8,15 @@ import { APIs_V1 } from '~/routes/v1'
 const START_SERVER = () => {
   const app = express()
 
+  // Enable req.body json data
+  app.use(express.json())
+
+  // Use APIs V1
   app.use('/v1', APIs_V1)
+
+  app.get('/', (req, res) => {
+    res.send('Hello world!')
+  })
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(`3. Hello ${env.AUTHOR}, Back-end Server is running at http://${env.APP_HOST}:${env.APP_PORT}`)
