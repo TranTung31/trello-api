@@ -15,13 +15,18 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   ).default([]),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
-  updatedAt: Joi.date().timestamp('javascript').default(Date.now),
+  updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
 
+const validateBeforeCreate = async (data) => {
+  return await BOARD_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false })
+}
+
 const createNew = async (data) => {
   try {
-    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(data)
+    const validData = await validateBeforeCreate(data)
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
   } catch (error) {
     throw new Error(error)
   }
