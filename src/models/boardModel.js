@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 import { GET_DB } from '~/config/mongodb'
+import { ObjectId } from 'mongodb'
 
 // Define Collection (name & schema)
 const BOARD_COLLECTION_NAME = 'boards'
@@ -35,7 +36,18 @@ const createNew = async (data) => {
 const findOneById = async (id) => {
   try {
     return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({
-      _id: id
+      _id: new ObjectId(id)
+    })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+// Query tổng hợp (aggregate) để lấy toàn bộ Columns và Cards thuộc về Board
+const getDetails = async (boardId) => {
+  try {
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({
+      _id: new ObjectId(boardId)
     })
   } catch (error) {
     throw new Error(error)
@@ -46,5 +58,6 @@ export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
-  findOneById
+  findOneById,
+  getDetails
 }
