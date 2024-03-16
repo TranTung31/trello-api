@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import exitHook from 'async-exit-hook'
 import express from 'express'
+import cors from 'cors'
+import { corsOptions } from '~/config/cors'
 import { env } from '~/config/environment'
 import { CLOSE_DB, CONNECT_DB } from '~/config/mongodb'
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
@@ -8,6 +10,8 @@ import { APIs_V1 } from '~/routes/v1'
 
 const START_SERVER = () => {
   const app = express()
+
+  app.use(cors(corsOptions))
 
   // Enable req.body json data
   app.use(express.json())
