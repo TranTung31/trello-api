@@ -1,4 +1,5 @@
 import { cardModel } from '~/models/cardModel'
+import { columnModel } from '~/models/columnModel'
 
 const createNew = async (reqBody) => {
   try {
@@ -10,6 +11,10 @@ const createNew = async (reqBody) => {
     const createdCard = await cardModel.createNew(newCard)
 
     const dataCreatedCard = await cardModel.findOneById(createdCard.insertedId)
+
+    if (dataCreatedCard) {
+      await columnModel.pushCardOrderIds(dataCreatedCard)
+    }
 
     return dataCreatedCard
   } catch (error) {
