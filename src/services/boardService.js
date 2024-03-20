@@ -4,6 +4,7 @@ import { boardModel } from '~/models/boardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
+import { ObjectId } from 'mongodb'
 
 const createNew = async (reqBody) => {
   try {
@@ -47,7 +48,27 @@ const getDetails = async (boardId) => {
   }
 }
 
+const update = async (boardId, reqBody) => {
+  try {
+    const arrColumnOrderIds = reqBody.columnOrderIds
+    const arr = []
+    arrColumnOrderIds.forEach((columnId) => {
+      arr.push(new ObjectId(columnId))
+    })
+
+    const updateData = {
+      columnOrderIds: [...arr],
+      updatedAt: Date.now()
+    }
+    const updatedBoard = await boardModel.update(boardId, updateData)
+    return updatedBoard
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
-  getDetails
+  getDetails,
+  update
 }
