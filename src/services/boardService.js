@@ -1,6 +1,8 @@
 /* eslint-disable no-useless-catch */
 import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
+import { columnModel } from '~/models/columnModel'
+import { cardModel } from '~/models/cardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
@@ -51,13 +53,9 @@ const getDetails = async (boardId) => {
 const update = async (boardId, reqBody) => {
   try {
     const arrColumnOrderIds = reqBody.columnOrderIds
-    const arr = []
-    arrColumnOrderIds.forEach((columnId) => {
-      arr.push(new ObjectId(columnId))
-    })
 
     const updateData = {
-      columnOrderIds: [...arr],
+      columnOrderIds: arrColumnOrderIds,
       updatedAt: Date.now()
     }
     const updatedBoard = await boardModel.update(boardId, updateData)
@@ -67,8 +65,32 @@ const update = async (boardId, reqBody) => {
   }
 }
 
+const moveCardToDifferentColumn = async (reqBody) => {
+  try {
+    // B1: Cập nhật lại mảng cardOrderIds của column ban đầu (Xóa _id của card được kéo ra khỏi mảng)
+    await columnModel.update(
+      reqBody.prevColumnId,
+      { cardOrderIds: reqBody.prevCardOrderIds, updatedAt: Date.now() }
+    )
+
+    // B2: Cập nhật lại mảng cardOrderIds của column tiếp theo (Thêm _id của card vào mảng)
+    await columnModel.update(
+      reqBody.nextColumnId,
+      { cardOrderIds: reqBody.nextCardOrderIds, updatedAt: Date.now() }
+    )
+
+    // B3: Cập nhật lại trường columnId của card đã kéo
+    await cardModel.update(reqBody.currentCardId, { columnId: reqBody.nextColumnId, updatedAt: Date.now() })
+
+    return { moveCardToDifferentColumnMessage: 'Success!' }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
   getDetails,
-  update
+  update,
+  moveCardToDifferentColumn
 }
