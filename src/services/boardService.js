@@ -1,12 +1,11 @@
 /* eslint-disable no-useless-catch */
-import { slugify } from '~/utils/formatters'
-import { boardModel } from '~/models/boardModel'
-import { columnModel } from '~/models/columnModel'
-import { cardModel } from '~/models/cardModel'
-import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
-import { ObjectId } from 'mongodb'
+import { boardModel } from '~/models/boardModel'
+import { cardModel } from '~/models/cardModel'
+import { columnModel } from '~/models/columnModel'
+import ApiError from '~/utils/ApiError'
+import { slugify } from '~/utils/formatters'
 
 const createNew = async (reqBody) => {
   try {
