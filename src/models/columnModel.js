@@ -38,10 +38,10 @@ const createNew = async (data) => {
   }
 }
 
-const findOneById = async (id) => {
+const findOneById = async (columnId) => {
   try {
     return await GET_DB().collection(COLUMN_COLLECTION_NAME).findOne({
-      _id: new ObjectId(id)
+      _id: new ObjectId(columnId)
     })
   } catch (error) {
     throw new Error(error)
