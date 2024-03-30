@@ -2,6 +2,8 @@ import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import bcrypt from 'bcrypt'
 import { GET_DB } from '~/config/mongodb'
+import jwt from 'jsonwebtoken'
+import { genarateAccessToken, genarateRefreshToken } from '~/middlewares/authMiddleware'
 
 const USER_COLLECTION_NAME = 'users'
 const USER_COLLECTION_SCHEMA = Joi.object({
@@ -36,14 +38,27 @@ const createNew = async (data) => {
 
 const login = async (data) => {
   try {
-    const { email, password } = data
+    const { email, password: passwordUser } = data
 
     const findOneByEmail = await GET_DB().collection(USER_COLLECTION_NAME).findOne({
       email: email
     })
     if (!findOneByEmail) return { status: 'ERROR', userMessage: 'The email is not definded!' }
-    if (bcrypt.compareSync(password, findOneByEmail.password)) {
-      return { status: 'SUCCESS', userMessage: 'Login successfully!' }
+
+    const { password, ...rests } = findOneByEmail
+
+    const accessToken = genarateAccessToken({
+      _id: findOneByEmail._id,
+      role: findOneByEmail.role
+    })
+
+    const refreshToken = genarateRefreshToken({
+      _id: findOneByEmail._id,
+      role: findOneByEmail.role
+    })
+
+    if (bcrypt.compareSync(passwordUser, findOneByEmail.password)) {
+      return { status: 'SUCCESS', userMessage: 'Login successfully!', data: { ...rests, accessToken, refreshToken } }
     } else {
       return { status: 'ERROR', userMessage: 'The password is incorrect!' }
     }

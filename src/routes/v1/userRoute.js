@@ -10,4 +10,7 @@ Router.route('/register')
 Router.route('/login')
   .post(userValidation.login, userController.login)
 
+Router.route('/refresh-token')
+  .post(userController.refreshAccessToken)
+
 export const userRoute = Router
