@@ -7,6 +7,7 @@ import { env } from '~/config/environment'
 import { CLOSE_DB, CONNECT_DB } from '~/config/mongodb'
 import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { APIs_V1 } from '~/routes/v1'
+import cookieParser from 'cookie-parser'
 
 const START_SERVER = () => {
   const app = express()
@@ -15,6 +16,7 @@ const START_SERVER = () => {
 
   // Enable req.body json data
   app.use(express.json())
+  app.use(cookieParser())
 
   // Use APIs V1
   app.use('/v1', APIs_V1)

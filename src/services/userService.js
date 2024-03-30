@@ -28,8 +28,7 @@ const createNew = async (reqBody) => {
 
 const login = async (reqBody) => {
   try {
-    const result = await userModel.login(reqBody)
-    return result
+    return await userModel.login(reqBody)
   } catch (error) {
     throw error
   }
