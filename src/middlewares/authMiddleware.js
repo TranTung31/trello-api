@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken'
 import { StatusCodes } from 'http-status-codes'
+import { env } from '~/config/environment'
 
 export const authUserMiddleware = (req, res, next) => {
   const token = req.headers.token
   if (token) {
     const accessToken = token.split(' ')[1]
-    jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
+    jwt.verify(accessToken, env.JWT_ACCESS_KEY, (err, user) => {
       if (err) {
         res.status(StatusCodes.FORBIDDEN).json({ status: 'ERROR', message: 'Token is not valid!' })
       } else {
@@ -22,9 +23,9 @@ export const authUserMiddleware = (req, res, next) => {
 }
 
 export const genarateAccessToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_ACCESS_KEY, { expiresIn: '30s' })
+  return jwt.sign(payload, env.JWT_ACCESS_KEY, { expiresIn: '30s' })
 }
 
 export const genarateRefreshToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_REFRESH_KEY, { expiresIn: '30d' })
+  return jwt.sign(payload, env.JWT_REFRESH_KEY, { expiresIn: '30d' })
 }
