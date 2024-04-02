@@ -38,7 +38,7 @@ const login = async (req, res, next) => {
 }
 
 const refreshAccessToken = (req, res) => {
-  const refreshToken = req.cookies.refreshToken
+  const { refreshToken } = req.body
   if (!refreshToken) res.status(StatusCodes.UNAUTHORIZED).json({
     status: 'ERROR',
     message: 'You are not authenticated!'
