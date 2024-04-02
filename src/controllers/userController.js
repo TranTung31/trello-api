@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import { userService } from '~/services/userService'
 import jwt from 'jsonwebtoken'
 import { genarateAccessToken, genarateRefreshToken } from '~/middlewares/authMiddleware'
+import { env } from '~/config/environment'
 
 const createNew = async (req, res, next) => {
   try {
@@ -44,7 +45,7 @@ const refreshAccessToken = (req, res) => {
     message: 'You are not authenticated!'
   })
 
-  jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
+  jwt.verify(refreshToken, env.JWT_REFRESH_KEY, (err, user) => {
     if (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ status: 'ERROR', message: 'Token is not valid!' })
     } else {
